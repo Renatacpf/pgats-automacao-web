@@ -399,7 +399,7 @@ npx cypress open --config chromeWebSecurity=false
 ## 👨‍💻 **Autor**
 
 **Renata** - Estudante PGATS  
-📧 Email: [seu-email]  
+📧 Email: renatacpf@gmail.com  
 🎓 Curso: Pós-Graduação em Automação de Testes de Software
 
 ### **Sobre o Desenvolvimento**
@@ -426,6 +426,6 @@ Para contribuir com o projeto:
 
 ---
 
-**📅 Última atualização**: Dezembro 2024  
+**📅 Última atualização**: Outubro 2025  
 **🚀 Status**: Projeto concluído e funcional  
 **🎯 Versão**: 1.0.0 - Production Ready
