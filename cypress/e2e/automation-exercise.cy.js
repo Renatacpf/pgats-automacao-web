@@ -1,29 +1,36 @@
 /// <reference types="cypress" />
 
 import testData from '../fixtures/example.json'
+import {
+  generateUserData,
+  generateContactData,
+  getRandomBirthDate
+} from '../support/helpers.js'
 
 describe('Automation Exercise', () => {
   it('Cadastrar um usuário', () => {
-    const timestamp = new Date().getTime()
+    // Gerar dados dinâmicos para o usuário
+    const userData = generateUserData()
+    const birthDate = getRandomBirthDate()
 
     cy.visit('https://automationexercise.com/')
 
     cy.get('a[href="/login"]').click()
 
-    cy.get('[data-qa="signup-name"]').type(testData.signupUser.name)
-    cy.get('[data-qa="signup-email"]').type(`qa.tester.${timestamp}@example.com`)
+    cy.get('[data-qa="signup-name"]').type(userData.name)
+    cy.get('[data-qa="signup-email"]').type(userData.email)
     cy.contains('button', 'Signup').click()
 
     // radio ou checkbox -> check
     // cy.get('#id_gender1').check()
     cy.get('input[type="radio"]').check('Mrs')
 
-    cy.get('input#password').type(testData.signupUser.password), { log: false }
+    cy.get('input#password').type(userData.password), { log: false }
 
-    // para comboboxes ou selects -> select
-    cy.get('[data-qa=days]').select('10')
-    cy.get('[data-qa=months]').select('May')
-    cy.get('[data-qa=years]').select('1990')
+    // para comboboxes ou selects -> select - usando dados dinâmicos
+    cy.get('[data-qa=days]').select(birthDate.day)
+    cy.get('[data-qa=months]').select(birthDate.month)
+    cy.get('[data-qa=years]').select(birthDate.year)
 
     // radio ou checkbox -> check
     // cy.get('#newsletter').check()
@@ -31,15 +38,16 @@ describe('Automation Exercise', () => {
     cy.get('input[type="checkbox"]#newsletter').check()
     cy.get('input[type="checkbox"]#optin').check()
 
-    cy.get('input#first_name').type(testData.signupUser.firstName)
-    cy.get('input#last_name').type(testData.signupUser.lastName)
-    cy.get('input#company').type(testData.signupUser.company)
-    cy.get('input#address1').type(testData.signupUser.address)
-    cy.get('select#country').select(testData.signupUser.country)
-    cy.get('input#state').type(testData.signupUser.state)
-    cy.get('input#city').type(testData.signupUser.city)
-    cy.get('[data-qa="zipcode"]').type(testData.signupUser.zipcode)
-    cy.get('[data-qa="mobile_number"]').type(testData.signupUser.mobileNumber)
+    // Preenchimento com dados dinâmicos gerados pelo faker
+    cy.get('input#first_name').type(userData.firstName)
+    cy.get('input#last_name').type(userData.lastName)
+    cy.get('input#company').type(userData.company)
+    cy.get('input#address1').type(userData.address)
+    cy.get('select#country').select(userData.country)
+    cy.get('input#state').type(userData.state)
+    cy.get('input#city').type(userData.city)
+    cy.get('[data-qa="zipcode"]').type(userData.zipcode)
+    cy.get('[data-qa="mobile_number"]').type(userData.mobileNumber)
 
     // Act
     cy.get('[data-qa="create-account"]').click()
@@ -49,10 +57,13 @@ describe('Automation Exercise', () => {
     cy.contains('Account Created!').should('be.visible')
 
     cy.get('[data-qa="continue-button"]').click()
-    cy.contains(`Logged in as ${testData.signupUser.name}`).should('be.visible')
+    cy.contains(`Logged in as ${userData.name}`).should('be.visible')
   });
 
   it('Enviar formulário de contato com upload de arquivo', () => {
+    // Gerar dados dinâmicos para o formulário de contato
+    const contactData = generateContactData()
+    
     cy.visit('https://automationexercise.com/')
 
     cy.get('a[href="/contact_us"]').click()
@@ -60,18 +71,15 @@ describe('Automation Exercise', () => {
     cy.url().should('include', '/contact_us')
     cy.contains('h2', 'Get In Touch')
 
-    cy.get('input[name="name"]').type(testData.contactForm.name)
-    
-    const timestamp = new Date().getTime()
-    const emailContato = `qa.contact.${timestamp}@example.com`
-    cy.get('input[name="email"]').type(emailContato)
-    
-    cy.get('input[name="subject"]').type(testData.contactForm.subject)
-    
-    cy.get('textarea[name="message"]').type(testData.contactForm.message)
+    // Preenchimento com dados dinâmicos gerados pelo faker
+    cy.get('input[name="name"]').type(contactData.name)
+    cy.get('input[name="email"]').type(contactData.email)
+    cy.get('input[name="subject"]').type(contactData.subject)
+    cy.get('textarea[name="message"]').type(contactData.message)
 
-    cy.get('input[name="upload_file"]').selectFile('cypress/fixtures/test-image.png')
-    
+    cy.fixture('test-image.png').as('testImage')
+    cy.get('input[name="upload_file"]').selectFile('@testImage')
+
     cy.get('input[name="submit"]').click()
 
     cy.get('.status')
