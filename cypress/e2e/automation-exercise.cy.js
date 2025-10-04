@@ -1,5 +1,7 @@
 /// <reference types="cypress" />
 
+import testData from '../fixtures/example.json'
+
 describe('Automation Exercise', () => {
   it('Cadastrar um usuário', () => {
     const timestamp = new Date().getTime()
@@ -8,7 +10,7 @@ describe('Automation Exercise', () => {
 
     cy.get('a[href="/login"]').click()
 
-    cy.get('[data-qa="signup-name"]').type('QA Tester')
+    cy.get('[data-qa="signup-name"]').type(testData.signupUser.name)
     cy.get('[data-qa="signup-email"]').type(`qa.tester.${timestamp}@example.com`)
     cy.contains('button', 'Signup').click()
 
@@ -16,7 +18,7 @@ describe('Automation Exercise', () => {
     // cy.get('#id_gender1').check()
     cy.get('input[type="radio"]').check('Mrs')
 
-    cy.get('input#password').type('teste123'), { log: false }
+    cy.get('input#password').type(testData.signupUser.password), { log: false }
 
     // para comboboxes ou selects -> select
     cy.get('[data-qa=days]').select('10')
@@ -29,15 +31,15 @@ describe('Automation Exercise', () => {
     cy.get('input[type="checkbox"]#newsletter').check()
     cy.get('input[type="checkbox"]#optin').check()
 
-    cy.get('input#first_name').type('QA')
-    cy.get('input#last_name').type('Tester')
-    cy.get('input#company').type('Teste Company')
-    cy.get('input#address1').type('Rua Teste, 123')
-    cy.get('select#country').select('Canada')
-    cy.get('input#state').type('Ontario')
-    cy.get('input#city').type('Toronto')
-    cy.get('[data-qa="zipcode"]').type('A1B 2C3')
-    cy.get('[data-qa="mobile_number"]').type('+1 234 567 8901')
+    cy.get('input#first_name').type(testData.signupUser.firstName)
+    cy.get('input#last_name').type(testData.signupUser.lastName)
+    cy.get('input#company').type(testData.signupUser.company)
+    cy.get('input#address1').type(testData.signupUser.address)
+    cy.get('select#country').select(testData.signupUser.country)
+    cy.get('input#state').type(testData.signupUser.state)
+    cy.get('input#city').type(testData.signupUser.city)
+    cy.get('[data-qa="zipcode"]').type(testData.signupUser.zipcode)
+    cy.get('[data-qa="mobile_number"]').type(testData.signupUser.mobileNumber)
 
     // Act
     cy.get('[data-qa="create-account"]').click()
@@ -47,7 +49,7 @@ describe('Automation Exercise', () => {
     cy.contains('Account Created!').should('be.visible')
 
     cy.get('[data-qa="continue-button"]').click()
-    cy.contains('Logged in as QA Tester').should('be.visible')
+    cy.contains(`Logged in as ${testData.signupUser.name}`).should('be.visible')
   });
 
   it('Enviar formulário de contato com upload de arquivo', () => {
@@ -58,16 +60,15 @@ describe('Automation Exercise', () => {
     cy.url().should('include', '/contact_us')
     cy.contains('h2', 'Get In Touch')
 
-    cy.get('input[name="name"]').type('QA Tester Contato')
+    cy.get('input[name="name"]').type(testData.contactForm.name)
     
     const timestamp = new Date().getTime()
     const emailContato = `qa.contact.${timestamp}@example.com`
     cy.get('input[name="email"]').type(emailContato)
     
-    cy.get('input[name="subject"]').type('Teste de Formulário de Contato com Upload')
+    cy.get('input[name="subject"]').type(testData.contactForm.subject)
     
-    const mensagem = 'Esta é uma mensagem de teste para validar o formulário de contato da aplicação Automation Exercise. Teste automatizado com Cypress incluindo upload de arquivo.'
-    cy.get('textarea[name="message"]').type(mensagem)
+    cy.get('textarea[name="message"]').type(testData.contactForm.message)
 
     cy.get('input[name="upload_file"]').selectFile('cypress/fixtures/test-image.png')
     
