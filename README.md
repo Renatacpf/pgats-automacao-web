@@ -20,11 +20,13 @@ O projeto implementa uma suíte abrangente de testes automatizados que aborda de
 - **JavaScript ES6+** - Linguagem de programação
 - **Node.js** - Ambiente de execução
 - **cypress-xpath 2.0.1** - Biblioteca para seletores XPath
+- **cypress-mochawesome-reporter 4.0.2** - Geração de relatórios HTML profissionais
 
 ### **Ferramentas de Desenvolvimento**
 - **Git** - Controle de versão
 - **VS Code** - Editor de código
 - **npm** - Gerenciador de pacotes
+- **Mochawesome Reporter** - Relatórios visuais e interativos
 
 ---
 
@@ -50,6 +52,11 @@ pgats-automacao-web/
 │   │   ├── menu/index.js                            # Módulo de navegação
 │   │   ├── carrinho/index.js                        # Módulo de carrinho de compras
 │   │   └── testflows/index.js                       # 🔄 Módulo de fluxos complexos
+│   ├── reports/                                      # 📊 Relatórios HTML gerados
+│   │   └── html/                                     # Relatórios do mochawesome
+│   │       ├── index.html                            # Relatório principal
+│   │       ├── assets/                               # CSS, JS e fontes
+│   │       └── screenshots/                          # Capturas automáticas
 │   ├── screenshots/                                  # Screenshots automáticos
 │   └── support/                                      # Configurações e comandos
 │       ├── commands.js                               # Comandos customizados
@@ -155,13 +162,31 @@ npx cypress verify
 
 ### **Execução dos Testes**
 
+#### **🚀 Scripts NPM (Recomendado)**
+```bash
+# Executar todos os testes com relatório HTML
+npm test
+
+# Executar testes e abrir relatório automaticamente
+npm run test:report
+
+# Executar apenas o arquivo principal (módulos)
+npm run test:modules
+
+# Abrir interface gráfica do Cypress
+npm run test:open
+```
+
 #### **🎯 Executar o Arquivo Principal**
 ```bash
-# Recomendado: Execute o fluxo completo otimizado
+# Recomendado: Execute o fluxo completo modular otimizado
+npx cypress run --spec "cypress/e2e/automation-exercise-complete-flow-modules.cy.js"
+
+# Fluxo completo tradicional
 npx cypress run --spec "cypress/e2e/automation-exercise-complete-flow.cy.js"
 
 # Interface gráfica para o arquivo principal
-npx cypress open --spec "cypress/e2e/automation-exercise-complete-flow.cy.js"
+npx cypress open --spec "cypress/e2e/automation-exercise-complete-flow-modules.cy.js"
 ```
 
 #### **📊 Executar Comparações e Análises**
@@ -191,11 +216,29 @@ npx cypress run --spec "cypress/e2e/automation-exercise.cy.js"
 
 #### **🔄 Execução Completa**
 ```bash
-# Todos os testes (24 testes em ~2 minutos)
+# Todos os testes (38 testes em ~8 minutos) com relatório HTML
+npm test
+
+# Todos os testes via Cypress CLI
 npx cypress run
 
 # Interface gráfica para seleção manual
-npx cypress open
+npm run test:open
+```
+
+#### **📊 Relatórios HTML**
+```bash
+# Após executar os testes, o relatório é gerado automaticamente em:
+# cypress/reports/html/index.html
+
+# Abrir relatório no navegador (Windows)
+start cypress/reports/html/index.html
+
+# Abrir relatório no navegador (macOS)
+open cypress/reports/html/index.html
+
+# Executar testes e abrir relatório automaticamente
+npm run test:report
 ```
 
 #### **🌐 Execução por Browser**
@@ -297,17 +340,66 @@ Os módulos integram-se com `helpers.js` que utiliza **@faker-js/faker** para:
 
 ---
 
+## 📊 **Relatórios HTML Profissionais**
+
+### **🎨 Mochawesome Reporter**
+O projeto utiliza **cypress-mochawesome-reporter** para gerar relatórios HTML ricos e interativos:
+
+#### **✨ Características dos Relatórios:**
+- 📊 **Visão Geral**: Estatísticas completas de execução
+- 🎯 **Detalhamento**: Status individual de cada teste
+- ⏱️ **Performance**: Tempos de execução por teste e suíte
+- 📱 **Responsivo**: Interface adaptável para diferentes dispositivos
+- 🎨 **Visual**: Gráficos e indicadores visuais de status
+- 📸 **Screenshots**: Capturas automáticas em falhas
+
+#### **📁 Estrutura dos Relatórios:**
+```
+cypress/reports/html/
+├── index.html              # Relatório principal
+├── assets/                 # CSS, JS e fontes
+│   ├── app.css             # Estilos do relatório
+│   ├── app.js              # Funcionalidades interativas
+│   └── *.woff              # Fontes Material Icons e Roboto
+└── screenshots/            # Capturas de tela automáticas
+```
+
+#### **🚀 Como Visualizar:**
+```bash
+# Executar testes e gerar relatório
+npm test
+
+# Abrir relatório automaticamente após execução
+npm run test:report
+
+# Abrir relatório manualmente (Windows)
+start cypress/reports/html/index.html
+
+# Abrir relatório manualmente (macOS/Linux)
+open cypress/reports/html/index.html
+```
+
+#### **📈 Dados do Último Relatório:**
+- **Total de testes**: 38
+- **Taxa de sucesso**: 100%
+- **Tempo total**: ~8 minutos
+- **Arquivos testados**: 6 specs
+- **Tamanho do relatório**: ~60KB
+
+---
+
 ## 📊 **Métricas e Performance**
 
 ### **📈 Estatísticas Gerais**
 | Arquivo | Testes | Tempo | Status |
 |---------|--------|-------|---------|
-| `automation-exercise-complete-flow.cy.js` | 11 | 1m 20s | ✅ 100% |
-| `automation-exercise.-modules.cy.js` | 2 | 40s | ✅ 100% |
-| `test-analysis-and-fixes.cy.js` | 6 | 11s | ✅ 100% |
-| `test-xpath-comparison.cy.js` | 6 | 9s | ✅ 100% |
-| `automation-exercise.cy.js` | 2 | 1m | ✅ 100% |
-| **TOTAL** | **24** | **~2m** | **✅ 100%** |
+| `automation-exercise-complete-flow-modules.cy.js` | 11 | 3m | ✅ 100% |
+| `automation-exercise-complete-flow.cy.js` | 11 | 2m 23s | ✅ 100% |
+| `automation-exercise.-modules.cy.js` | 2 | 1m 4s | ✅ 100% |
+| `automation-exercise.cy.js` | 2 | 1m 5s | ✅ 100% |
+| `test-analysis-and-fixes.cy.js` | 6 | 12s | ✅ 100% |
+| `test-xpath-comparison.cy.js` | 6 | 13s | ✅ 100% |
+| **TOTAL** | **38** | **~8m** | **✅ 100%** |
 
 ### **🎯 Cobertura de Funcionalidades**
 - ✅ **Autenticação**: Login, logout, validações
@@ -385,6 +477,12 @@ cy.get('body').then(($body) => {
 2. **State Verification**: Verificações de estado da aplicação
 3. **Visual Debugging**: Screenshots automáticos em falhas
 4. **Error Documentation**: Análise de erros comuns e soluções
+
+### **✅ Relatórios e Documentação**
+1. **HTML Reports**: Relatórios visuais com cypress-mochawesome-reporter
+2. **Test Coverage**: Cobertura completa de funcionalidades críticas
+3. **Performance Metrics**: Acompanhamento de tempos de execução
+4. **Visual Feedback**: Interface rica para análise de resultados
 
 ---
 
@@ -555,6 +653,21 @@ Para contribuir com o projeto:
 - ✅ Seguir convenções de nomenclatura
 - ✅ Adicionar documentação para novas funcionalidades
 - ✅ Incluir análises de performance quando relevante
+- ✅ Verificar geração de relatórios HTML após mudanças
+
+---
+
+## 🎯 **Conclusão**
+
+Este projeto demonstra uma evolução completa de automação de testes, desde implementações básicas até uma arquitetura modular profissional com:
+
+- ✅ **38 testes automatizados** com 100% de aprovação
+- ✅ **Relatórios HTML profissionais** com cypress-mochawesome-reporter
+- ✅ **Arquitetura modular** baseada no Page Object Model
+- ✅ **Performance otimizada** com scripts npm e dados dinâmicos
+- ✅ **Documentação abrangente** para referência e aprendizado
+
+**Resultado**: Uma suíte de testes robusta, mantível e profissional, adequada para projetos de produção. 🚀
 
 ---
 
