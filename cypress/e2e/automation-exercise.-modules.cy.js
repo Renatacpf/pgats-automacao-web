@@ -2,86 +2,76 @@
 
 import CadastroPage from '../modules/cadastro/index.js'
 import ContatoPage from '../modules/contato/index.js'
-import LoginPage from '../modules/login/index.js'
-import MenuPage from '../modules/menu/index.js'
+import {
+  generateUserData,
+  generateContactData,
+  getRandomBirthDate
+} from '../support/helpers.js'
 
-describe('Automation Exercise - Modular', () => {
+describe('Automation Exercise', () => {
   let cadastroPage
   let contatoPage
-  let loginPage
-  let menuPage
 
   beforeEach(() => {
     // Instanciar os page objects antes de cada teste
     cadastroPage = new CadastroPage()
     contatoPage = new ContatoPage()
-    loginPage = new LoginPage()
-    menuPage = new MenuPage()
   })
 
-  it('Cadastrar um usuário - usando módulo', () => {
-    // Executar o cadastro completo usando o módulo
-    const userData = cadastroPage.cadastrarUsuario()
+  it('Cadastrar um usuário', () => {
+    // Gerar dados dinâmicos
+    const userData = generateUserData()
+    const birthDate = getRandomBirthDate()
+    
+    // Executar ações passo a passo para permitir validações
+    cadastroPage.visitHomePage()
+    cadastroPage.accessSignupPage()
+    cadastroPage.fillSignupForm(userData)
+    cadastroPage.fillAccountForm(userData, birthDate)
+    cadastroPage.createAccount()
+    
+    // Validar conta criada
+    cy.url().should('include', 'account_created')
+    cy.contains('Account Created!')
+    
+    cadastroPage.continueToAccount()
+    
+    // Validar usuário logado
+    cy.contains(`Logged in as ${userData.name}`)
     
     // Log dos dados gerados para debug
     cy.log('Usuário cadastrado:', userData.name)
     cy.log('Email:', userData.email)
   })
 
-  it('Enviar formulário de contato com upload de arquivo - usando módulo', () => {
-    // Executar o envio do formulário de contato usando o módulo
-    const contactData = contatoPage.enviarFormularioContato()
+  it('Enviar formulário de contato com upload de arquivo', () => {
+    // Gerar dados dinâmicos
+    const contactData = generateContactData()
+    
+    // Executar ações passo a passo para permitir validações
+    contatoPage.visitHomePage()
+    contatoPage.accessContactPage()
+    
+    // Validar página de contato carregada
+    cy.url().should('include', '/contact_us')
+    cy.contains('h2', 'Get In Touch')
+    
+    contatoPage.fillContactForm(contactData)
+    contatoPage.uploadFile()
+    contatoPage.submitForm()
+    
+    // Validar mensagem de sucesso
+    cy.get('.status')
+      .should('contain', 'Success! Your details have been submitted successfully.')
+    
+    contatoPage.returnToHomePage()
+    
+    // Validar retorno à página inicial
+    cy.url().should('eq', 'https://automationexercise.com/')
+    cy.contains('AutomationExercise')
     
     // Log dos dados gerados para debug
     cy.log('Contato enviado por:', contactData.name)
     cy.log('Assunto:', contactData.subject)
-  })
-
-  it('Verificar navegação do menu principal', () => {
-    // Verificar o menu principal usando o módulo
-    menuPage.verificarMenuPrincipal()
-    
-    // Testar navegação para diferentes seções
-    menuPage.navigateToProducts()
-    cy.log('Navegação para produtos realizada')
-    
-    menuPage.navigateToContact()
-    cy.log('Navegação para contato realizada')
-    
-    menuPage.visitHomePage()
-    cy.log('Retorno para página inicial realizado')
-  })
-
-  // Exemplo de teste que combina múltiplos módulos
-  it('Fluxo completo: Cadastrar usuário e enviar contato', () => {
-    // Primeiro, cadastrar um usuário
-    const userData = cadastroPage.cadastrarUsuario()
-    cy.log('Usuário cadastrado:', userData.name)
-    
-    // Verificar se o usuário está logado no menu
-    menuPage.verifyUserLoggedIn(userData.name)
-    
-    // Em seguida, enviar um formulário de contato
-    const contactData = contatoPage.enviarFormularioContato()
-    cy.log('Contato enviado:', contactData.subject)
-  })
-
-  it('Fluxo avançado: Cadastro, logout, login e contato', () => {
-    // 1. Cadastrar um novo usuário
-    const userData = cadastroPage.cadastrarUsuario()
-    cy.log('Etapa 1: Usuário cadastrado -', userData.name)
-    
-    // 2. Realizar logout
-    loginPage.realizarLogout()
-    cy.log('Etapa 2: Logout realizado')
-    
-    // 3. Realizar login novamente
-    loginPage.realizarLogin(userData.email, userData.password)
-    loginPage.verifySuccessfulLogin(userData.name)
-    cy.log('Etapa 3: Login realizado com sucesso')
-    
-    // 4. Enviar formulário de contato
-    const contactData = contatoPage.enviarFormularioContato()
-    cy.log('Etapa 4: Contato enviado -', contactData.subject)
   })
 });

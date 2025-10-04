@@ -51,21 +51,12 @@ class CadastroPage {
     cy.get('[data-qa="create-account"]').click()
   }
 
-  verifyAccountCreated() {
-    cy.url().should('include', 'account_created')
-    cy.contains('Account Created!').should('be.visible')
-  }
-
   continueToAccount() {
     cy.get('[data-qa="continue-button"]').click()
   }
 
-  verifyUserLoggedIn(userName) {
-    cy.contains(`Logged in as ${userName}`).should('be.visible')
-  }
-
   /**
-   * Método principal para realizar o cadastro completo de um usuário
+   * Método principal para realizar o cadastro completo de um usuário (apenas ações)
    */
   cadastrarUsuario() {
     // Gerar dados dinâmicos para o usuário
@@ -77,11 +68,9 @@ class CadastroPage {
     this.fillSignupForm(userData)
     this.fillAccountForm(userData, birthDate)
     this.createAccount()
-    this.verifyAccountCreated()
     this.continueToAccount()
-    this.verifyUserLoggedIn(userData.name)
 
-    // Retornar dados do usuário para uso posterior se necessário
+    // Retornar dados do usuário para uso posterior
     return userData
   }
 }
