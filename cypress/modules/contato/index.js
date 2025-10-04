@@ -10,8 +10,6 @@ class ContatoPage {
     cy.get('a[href="/contact_us"]').click()
   }
 
-  // Método removido - verificação movida para o teste
-
   fillContactForm(contactData) {
     cy.get('input[name="name"]').type(contactData.name)
     cy.get('input[name="email"]').type(contactData.email)
@@ -32,11 +30,7 @@ class ContatoPage {
     cy.get('#form-section a[href="/"]').click()
   }
 
-  /**
-   * Método principal para enviar formulário de contato com upload de arquivo (apenas ações)
-   */
   enviarFormularioContato() {
-    // Gerar dados dinâmicos para o formulário de contato
     const contactData = generateContactData()
     
     this.visitHomePage()
@@ -46,7 +40,6 @@ class ContatoPage {
     this.submitForm()
     this.returnToHomePage()
 
-    // Retornar dados do contato para uso posterior
     return contactData
   }
 }

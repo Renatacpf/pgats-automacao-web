@@ -13,11 +13,6 @@ class CadastroPage {
     cy.get('a[href="/login"]').click()
   }
 
-  /**
-   * Preenche formulário básico de signup com nome e email
-   * @param {string} name - Nome do usuário
-   * @param {string} email - Email do usuário
-   */
   fillBasicSignupForm(name, email) {
     this.accessSignupPage()
     cy.contains('h2', 'New User Signup!')
@@ -32,11 +27,6 @@ class CadastroPage {
     cy.contains('button', 'Signup').click()
   }
 
-  /**
-   * Preenche informações completas da conta incluindo data de nascimento
-   * @param {object} userData - Dados do usuário
-   * @param {object} birthDate - Data de nascimento (opcional, será gerada se não fornecida)
-   */
   fillCompleteAccountForm(userData, birthDate = null) {
     if (!birthDate) {
       birthDate = getRandomBirthDate()
@@ -45,22 +35,16 @@ class CadastroPage {
   }
 
   fillAccountForm(userData, birthDate) {
-    // Selecionar gênero
     cy.get('input[type="radio"]').check('Mrs')
-    
-    // Definir senha
     cy.get('input#password').type(userData.password, { log: false })
 
-    // Selecionar data de nascimento
     cy.get('[data-qa=days]').select(birthDate.day)
     cy.get('[data-qa=months]').select(birthDate.month)
     cy.get('[data-qa=years]').select(birthDate.year)
 
-    // Marcar checkboxes
     cy.get('input[type="checkbox"]#newsletter').check()
     cy.get('input[type="checkbox"]#optin').check()
 
-    // Preencher informações pessoais
     cy.get('input#first_name').type(userData.firstName)
     cy.get('input#last_name').type(userData.lastName)
     cy.get('input#company').type(userData.company)
@@ -80,11 +64,7 @@ class CadastroPage {
     cy.get('[data-qa="continue-button"]').click()
   }
 
-  /**
-   * Método principal para realizar o cadastro completo de um usuário (apenas ações)
-   */
   cadastrarUsuario() {
-    // Gerar dados dinâmicos para o usuário
     const userData = generateUserData()
     const birthDate = getRandomBirthDate()
 
@@ -95,7 +75,6 @@ class CadastroPage {
     this.createAccount()
     this.continueToAccount()
 
-    // Retornar dados do usuário para uso posterior
     return userData
   }
 }

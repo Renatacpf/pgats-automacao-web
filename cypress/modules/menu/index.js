@@ -59,20 +59,14 @@ class MenuPage {
     cy.scrollTo('top')
   }
 
-  /**
-   * Método para verificar se todos os links principais do menu estão visíveis
-   */
   verificarMenuPrincipal() {
     this.visitHomePage()
     this.verifyHomePageLoaded()
     
-    // Verificar se os links principais estão visíveis
     cy.get('a[href="/products"]').should('be.visible')
     cy.get('a[href="/view_cart"]').should('be.visible')
     cy.get('a[href="/contact_us"]').should('be.visible')
     cy.get('a[href="/login"]').should('be.visible')
-    
-    cy.log('Menu principal verificado com sucesso')
   }
 }
 

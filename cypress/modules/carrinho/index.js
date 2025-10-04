@@ -15,14 +15,12 @@ class CarrinhoPage {
   }
 
   addFirstProductToCart() {
-    // Adicionar o primeiro produto encontrado ao carrinho
     cy.get('.product-overlay').first().within(() => {
       cy.get('a[data-product-id]').first().click()
     })
   }
 
   addProductToCart(productIndex = 0) {
-    // Adicionar produto específico por índice ao carrinho
     cy.get('.product-overlay').eq(productIndex).within(() => {
       cy.get('a[data-product-id]').click()
     })
@@ -63,41 +61,27 @@ class CarrinhoPage {
     cy.get('.cart_quantity_update').click()
   }
 
-  /**
-   * Método principal para adicionar produto ao carrinho
-   */
   adicionarProdutoAoCarrinho(productName = null) {
     this.visitHomePage()
     this.navigateToProducts()
     
     if (productName) {
       this.searchProduct(productName)
-      cy.log(`Produto pesquisado: ${productName}`)
     }
     
     this.addFirstProductToCart()
     this.continueToCart()
-    
-    cy.log('Produto adicionado ao carrinho com sucesso')
   }
 
-  /**
-   * Método para verificar carrinho
-   */
   verificarCarrinho() {
     this.viewCart()
     this.verifyProductInCart()
-    cy.log('Carrinho verificado com sucesso')
   }
 
-  /**
-   * Método para limpar carrinho
-   */
   limparCarrinho() {
     this.viewCart()
     this.removeProductFromCart()
     this.verifyEmptyCart()
-    cy.log('Carrinho limpo com sucesso')
   }
 }
 
