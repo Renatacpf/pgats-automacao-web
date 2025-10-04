@@ -34,7 +34,8 @@ O projeto implementa uma suíte abrangente de testes automatizados que aborda de
 pgats-automacao-web/
 ├── cypress/
 │   ├── e2e/                                          # Suíte de testes
-│   │   ├── automation-exercise-complete-flow.cy.js   # ⭐ Fluxo principal (5 test cases)
+│   │   ├── automation-exercise-complete-flow-modules.cy.js # ⭐ Fluxo modular (11 test cases)
+│   │   ├── automation-exercise-complete-flow.cy.js   # Fluxo principal (5 test cases)
 │   │   ├── automation-exercise.-modules.cy.js        # 🧩 Testes usando módulos (POM)
 │   │   ├── automation-exercise.cy.js                 # Teste básico de cadastro
 │   │   ├── test-analysis-and-fixes.cy.js            # Correção de bugs
@@ -47,7 +48,22 @@ pgats-automacao-web/
 │   │   ├── contato/index.js                         # Módulo de formulário de contato
 │   │   ├── login/index.js                           # Módulo de autenticação
 │   │   ├── menu/index.js                            # Módulo de navegação
-│   │   └── carrinho/index.js                        # Módulo de carrinho de compras
+│   │   ├── carrinho/index.js                        # Módulo de carrinho de compras
+│   │   └── testflows/index.js                       # 🔄 Módulo de fluxos complexos
+│   ├── screenshots/                                  # Screenshots automáticos
+│   └── support/                                      # Configurações e comandos
+│       ├── commands.js                               # Comandos customizados
+│       ├── helpers.js                               # 🎲 Funções com faker.js
+│       └── e2e.js                                    # Setup global
+├── css-vs-xpath-comparison.md                        # 📊 Análise técnica detalhada
+├── test-analysis-and-fixes-summary.md                # 🔧 Documentação de correções
+├── test-cases-implementation-summary.md              # 📋 Resumo completo dos testes
+├── modular-architecture-documentation.md             # 🏗️ Documentação da arquitetura modular
+├── cypress.config.js                                # Configuração do Cypress
+├── package.json                                      # Dependências e scripts
+├── .gitignore                                        # Arquivos ignorados
+└── README.md                                         # Esta documentação
+```
 │   ├── screenshots/                                  # Screenshots automáticos
 │   └── support/                                      # Configurações e comandos
 │       ├── commands.js                               # Comandos customizados
@@ -67,23 +83,30 @@ pgats-automacao-web/
 
 ## 🧪 **Testes Implementados**
 
-### **🏆 Arquivo Principal: `automation-exercise-complete-flow.cy.js`**
+### **🏆 Arquivo Principal: `automation-exercise-complete-flow-modules.cy.js`**
 
-**O arquivo estrela do projeto** que implementa todos os 5 test cases principais com arquitetura otimizada:
+**O arquivo estrela do projeto** que implementa todos os 5 test cases principais com arquitetura modular avançada:
 
 #### **Test Cases Cobertos:**
 1. **TC1 - Register User**: Cadastro completo de usuário
 2. **TC2 - Login Correct**: Login com credenciais válidas  
 3. **TC3 - Login Incorrect**: Falhas de login (4 cenários)
-4. **TC4 - Logout User**: Logout e validações de estado
-5. **TC5 - Register Existing**: Cadastro com email duplicado
+4. **TC4 - Logout User**: Logout e validações de estado (3 cenários)
+5. **TC5 - Register Existing**: Cadastro com email duplicado (2 cenários)
 
-#### **Arquitetura Avançada:**
-- 🔄 **Shared Data Flow**: Dados criados no TC1 são reutilizados
-- 🛠️ **Helper Functions**: `navigateToSignupLogin()`, `performLogin()`, `fillAccountInformation()`
+#### **Arquitetura Modular Avançada:**
+- 🧩 **Page Object Model**: Módulos especializados para cada área
+- 🔄 **TestFlows Module**: Fluxos complexos centralizados
+- 🛠️ **Smart Methods**: `fillBasicSignupForm()`, `performSmartLogout()`, `cleanupTestAccount()`
 - 🛡️ **Defensive Programming**: Verificações de estado antes de cada ação
 - 🧹 **Auto Cleanup**: Remoção automática de dados de teste
-- 📊 **Performance**: 11 testes em 1m 20s
+- 📊 **Performance**: 11 testes em 1m 40s (152 linhas de código)
+
+#### **Módulos Utilizados:**
+- **CadastroPage**: Cadastro e signup
+- **LoginPage**: Autenticação inteligente  
+- **MenuPage**: Navegação e verificações
+- **TestFlows**: Operações complexas e cleanup
 
 ---
 
@@ -201,8 +224,27 @@ cypress/modules/
 ├── contato/index.js     # 📧 Formulário de contato com upload
 ├── login/index.js       # 🔑 Autenticação e logout
 ├── menu/index.js        # 🧭 Navegação entre páginas
-└── carrinho/index.js    # 🛒 Carrinho de compras
+├── carrinho/index.js    # 🛒 Carrinho de compras
+└── testflows/index.js   # 🔄 Fluxos complexos e operações avançadas
 ```
+
+### **✨ Novo Módulo: TestFlows**
+
+O módulo **TestFlows** foi criado para centralizar operações complexas que envolvem múltiplas etapas:
+
+#### **🎯 Métodos Principais:**
+- `completeRegistration()` - Finaliza processo de cadastro com validações
+- `performSmartLogout()` - Logout inteligente que verifica estado
+- `deleteUserAccount()` - Remove conta com validações
+- `verifyUserLoggedIn(username)` - Verifica login do usuário
+- `verifyLogoutSuccess()` - Valida logout bem-sucedido
+- `cleanupTestAccount(email, password)` - Limpeza completa pós-teste
+
+#### **💡 Benefícios:**
+- **Operações complexas centralizadas**
+- **Reutilização em múltiplos test cases**
+- **Manutenção simplificada**
+- **Código de teste mais limpo**
 
 ### **🔧 Princípios da Arquitetura**
 
@@ -220,24 +262,31 @@ cypress/modules/
 - Código organizado por funcionalidade
 - Debug mais eficiente
 
-### **📝 Exemplo de Uso**
+### **📝 Exemplo de Uso Modular**
 ```javascript
 // Importar módulos
 import CadastroPage from '../modules/cadastro/index.js'
-import ContatoPage from '../modules/contato/index.js'
+import LoginPage from '../modules/login/index.js'
+import TestFlows from '../modules/testflows/index.js'
 
 // Instanciar
 const cadastroPage = new CadastroPage()
-const contatoPage = new ContatoPage()
+const loginPage = new LoginPage()
+const testFlows = new TestFlows()
 
-// Usar ações dos módulos
-cadastroPage.visitHomePage()
-cadastroPage.fillSignupForm(userData)
-cadastroPage.createAccount()
+// Usar ações dos módulos especializados
+cadastroPage.fillBasicSignupForm(name, email)
+cadastroPage.fillCompleteAccountForm(userData)
+testFlows.completeRegistration()
+
+// Operações inteligentes
+loginPage.performSmartLogout()
+testFlows.verifyUserLoggedIn(username)
 
 // Validações ficam no teste
 cy.url().should('include', 'account_created')
 cy.contains('Account Created!').should('be.visible')
+testFlows.verifyLogoutSuccess()
 ```
 
 ### **🎲 Geração de Dados Dinâmicos**
