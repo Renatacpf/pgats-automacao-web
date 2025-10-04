@@ -205,7 +205,88 @@ cy.contains('Email Address already exist!').should('be.visible')
 
 ---
 
-## 🛠️ **Helper Functions Implementadas**
+## � **Test Case Adicional: Upload de Arquivo (Contact Us)**
+
+### **Objetivo:**
+Implementar teste de formulário de contato com funcionalidade de upload de imagem, demonstrando interação com arquivos no Cypress.
+
+### **Arquivo:** `automation-exercise.cy.js`
+
+#### **Como foi implementado:**
+
+1. **Estrutura de Dados Centralizada:**
+```javascript
+// cypress/fixtures/example.json
+{
+  "signupUser": { /* dados para cadastro */ },
+  "contactForm": {
+    "name": "QA Tester Contato",
+    "email": "qa.contact@example.com", 
+    "subject": "Teste de Formulário de Contato com Upload",
+    "message": "Esta é uma mensagem de teste para validar o formulário..."
+  }
+}
+```
+
+2. **Fluxo de Implementação:**
+   - **Navegação**: Acesso direto à página Contact Us
+   - **Preenchimento**: Uso de dados centralizados do `example.json`
+   - **Upload**: Comando `.selectFile()` para upload de imagem
+   - **Validação**: Verificação de mensagem de sucesso
+   - **Retorno**: Navegação de volta à página inicial
+
+3. **Upload de Arquivo:**
+```javascript
+cy.get('input[name="upload_file"]').selectFile('cypress/fixtures/test-image.png')
+```
+
+4. **Elementos Mapeados:**
+   - `input[name="name"]` - Campo nome
+   - `input[name="email"]` - Campo email  
+   - `input[name="subject"]` - Campo assunto
+   - `textarea[name="message"]` - Campo mensagem
+   - `input[name="upload_file"]` - Campo upload
+   - `input[name="submit"]` - Botão enviar
+
+5. **Validações Implementadas:**
+   - ✅ Página Contact Us carregada (`h2` "Get In Touch")
+   - ✅ URL contém `/contact_us`
+   - ✅ Formulário preenchido com dados do JSON
+   - ✅ Arquivo de imagem selecionado com sucesso
+   - ✅ Mensagem de sucesso exibida
+   - ✅ Retorno à página inicial confirmado
+
+6. **Arquivos do Projeto:**
+   - **Teste**: `cypress/e2e/automation-exercise.cy.js`
+   - **Dados**: `cypress/fixtures/example.json`
+   - **Imagem**: `cypress/fixtures/test-image.png`
+
+### **Benefícios Técnicos:**
+
+#### **Centralização de Dados:**
+- **Manutenibilidade**: Dados em JSON separado da lógica
+- **Reutilização**: Estrutura organizadas por funcionalidade  
+- **Flexibilidade**: Fácil modificação sem alterar código
+
+#### **Upload de Arquivos:**
+- **Comando Moderno**: Uso do `.selectFile()` do Cypress
+- **Validação Completa**: Teste end-to-end com arquivo real
+- **Cenário Real**: Simulação de uso comum da aplicação
+
+#### **Qualidade do Código:**
+- **Import ES6**: `import testData from '../fixtures/example.json'`
+- **Código Limpo**: Sem logs desnecessários ou comentários excessivos
+- **Validações Robustas**: Verificações em cada etapa do fluxo
+
+### **Resultado:**
+- ✅ **100% de sucesso** nos testes
+- ✅ **Upload funcionando** perfeitamente
+- ✅ **Dados centralizados** e organizados
+- ✅ **Código limpo** e maintível
+
+---
+
+## �🛠️ **Helper Functions Implementadas**
 
 ### **1. `navigateToSignupLogin()`**
 - **Função**: Navegação para página de cadastro/login
