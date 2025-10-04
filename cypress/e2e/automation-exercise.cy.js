@@ -49,4 +49,37 @@ describe('Automation Exercise', () => {
     cy.get('[data-qa="continue-button"]').click()
     cy.contains('Logged in as QA Tester').should('be.visible')
   });
+
+  it('Enviar formulário de contato com upload de arquivo', () => {
+    cy.visit('https://automationexercise.com/')
+
+    cy.get('a[href="/contact_us"]').click()
+    
+    cy.url().should('include', '/contact_us')
+    cy.contains('h2', 'Get In Touch')
+
+    cy.get('input[name="name"]').type('QA Tester Contato')
+    
+    const timestamp = new Date().getTime()
+    const emailContato = `qa.contact.${timestamp}@example.com`
+    cy.get('input[name="email"]').type(emailContato)
+    
+    cy.get('input[name="subject"]').type('Teste de Formulário de Contato com Upload')
+    
+    const mensagem = 'Esta é uma mensagem de teste para validar o formulário de contato da aplicação Automation Exercise. Teste automatizado com Cypress incluindo upload de arquivo.'
+    cy.get('textarea[name="message"]').type(mensagem)
+
+    cy.get('input[name="upload_file"]').selectFile('cypress/fixtures/test-image.png')
+    
+    cy.get('input[name="submit"]').click()
+
+    cy.get('.status')
+      .should('contain', 'Success! Your details have been submitted successfully.')
+      .should('be.visible')
+    
+    cy.get('#form-section a[href="/"]').click()
+    
+    cy.url().should('eq', 'https://automationexercise.com/')
+    cy.contains('AutomationExercise')
+  });
 });
