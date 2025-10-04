@@ -52,6 +52,30 @@ class LoginPage {
   }
 
   /**
+   * Login simples sem navegação (assumindo que já está na página)
+   * @param {string} email - Email do usuário
+   * @param {string} password - Senha do usuário
+   */
+  performQuickLogin(email, password) {
+    this.fillLoginForm(email, password)
+    this.submitLogin()
+  }
+
+  /**
+   * Logout inteligente que verifica se o usuário está logado
+   */
+  performSmartLogout() {
+    cy.get('body').then($body => {
+      if ($body.find('a[href="/logout"]').length > 0) {
+        this.logout()
+      } else {
+        this.accessLoginPage()
+        this.verifyLoginPageLoaded()
+      }
+    })
+  }
+
+  /**
    * Método para realizar logout
    */
   realizarLogout() {

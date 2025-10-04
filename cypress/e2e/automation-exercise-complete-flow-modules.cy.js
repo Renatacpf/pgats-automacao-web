@@ -3,6 +3,7 @@
 import CadastroPage from '../modules/cadastro/index.js'
 import LoginPage from '../modules/login/index.js'
 import MenuPage from '../modules/menu/index.js'
+import TestFlows from '../modules/testflows/index.js'
 import {
   generateUserData,
   getRandomBirthDate
@@ -13,11 +14,13 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
   let cadastroPage
   let loginPage
   let menuPage
+  let testFlows
   
   before(() => {
     cadastroPage = new CadastroPage()
     loginPage = new LoginPage()
     menuPage = new MenuPage()
+    testFlows = new TestFlows()
     
     const userData = generateUserData()
     testUser = {
@@ -41,79 +44,33 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
     menuPage.verifyHomePageLoaded()
   })
 
-  const fillSignupForm = (name, email) => {
-    cadastroPage.accessSignupPage()
-    cy.contains('h2', 'New User Signup!')
-    cy.get('[data-qa="signup-name"]').type(name)
-    cy.get('[data-qa="signup-email"]').type(email)
-    cy.contains('button', 'Signup').click()
-  }
-
-  const fillAccountInformation = (userData) => {
-    const birthDate = getRandomBirthDate()
-    cadastroPage.fillAccountForm(userData, birthDate)
-  }
-
-  const completeRegistration = () => {
-    cadastroPage.createAccount()
-    cy.url().should('include', 'account_created')
-    cy.contains('h2', 'Account Created!')
-    cadastroPage.continueToAccount()
-  }
-
-  const performLogin = (email, password) => {
-    loginPage.realizarLogin(email, password)
-  }
-
-  const performLogout = () => {
-    cy.get('body').then($body => {
-      if ($body.find('a[href="/logout"]').length > 0) {
-        loginPage.realizarLogout()
-      } else {
-        menuPage.navigateToLogin()
-        cy.contains('h2', 'Login to your account')
-      }
-    })
-  }
-
-  const deleteAccount = () => {
-    cy.get('body').then($body => {
-      if ($body.find('a[href="/delete_account"]').length > 0) {
-        cy.get('a[href="/delete_account"]').click()
-        cy.contains('h2', 'Account Deleted!')
-        
-        cy.get('[data-qa="continue-button"]').click()
-      }
-    })
-  }
-
   context('Test Case 1: Register User', () => {
     it('Should register a new user successfully', () => {
-      fillSignupForm(testUser.name, testUser.email)
+      cadastroPage.fillBasicSignupForm(testUser.name, testUser.email)
       
-      fillAccountInformation(testUser)
+      cadastroPage.fillCompleteAccountForm(testUser)
       
-      completeRegistration()
+      testFlows.completeRegistration()
       
-      cy.contains(`Logged in as ${testUser.name}`)
+      testFlows.verifyUserLoggedIn(testUser.name)
     })
   })
 
   context('Test Case 2: Login User with correct email and password', () => {
     it('Should login user with correct credentials', () => {
-      performLogout()
+      testFlows.performSmartLogout()
       
-      performLogin(testUser.email, testUser.password)
+      loginPage.realizarLogin(testUser.email, testUser.password)
       
-      cy.contains(`Logged in as ${testUser.name}`)
+      testFlows.verifyUserLoggedIn(testUser.name)
     })
   })
 
   context('Test Case 3: Login User with incorrect email and password', () => {
     it('Should show error message for invalid email', () => {
-      performLogout()
+      testFlows.performSmartLogout()
       
-      performLogin('invalid@example.com', 'wrongpassword')
+      loginPage.realizarLogin('invalid@example.com', 'wrongpassword')
       
       cy.contains('p', 'Your email or password is incorrect!')
     })
@@ -128,13 +85,13 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
     })
 
     it('Should show error message for non-existent email', () => {
-      performLogin('nonexistent.email.12345@notreal.com', 'somepassword123')
+      loginPage.realizarLogin('nonexistent.email.12345@notreal.com', 'somepassword123')
       
       cy.contains('p', 'Your email or password is incorrect!')
     })
 
     it('Should show error message for incorrect password', () => {
-      performLogin(testUser.email, 'wrongpassword123')
+      loginPage.realizarLogin(testUser.email, 'wrongpassword123')
       
       cy.contains('p', 'Your email or password is incorrect!')
     })
@@ -142,14 +99,13 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
 
   context('Test Case 4: Logout User', () => {
     it('Should logout user successfully', () => {
-      performLogin(testUser.email, testUser.password)
+      loginPage.realizarLogin(testUser.email, testUser.password)
       
-      cy.contains(`Logged in as ${testUser.name}`)
+      testFlows.verifyUserLoggedIn(testUser.name)
       
-      performLogout()
+      testFlows.performSmartLogout()
       
-      cy.get('a[href="/logout"]').should('not.exist')
-      cy.get('a[href="/login"]').should('contain', 'Signup / Login')
+      testFlows.verifyLogoutSuccess()
     })
 
     it('Should redirect to login page after logout', () => {
@@ -171,13 +127,7 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
 
   context('Test Case 5: Register User with existing email', () => {
     it('Should show error when registering with existing email', () => {
-      cadastroPage.accessSignupPage()
-      
-      cy.contains('h2', 'New User Signup!')
-      
-      cy.get('[data-qa="signup-name"]').type('Duplicate User')
-      cy.get('[data-qa="signup-email"]').type(testUser.email)
-      cy.contains('button', 'Signup').click()
+      cadastroPage.fillBasicSignupForm('Duplicate User', testUser.email)
       
       cy.contains('p', 'Email Address already exist!')
     })
@@ -198,15 +148,6 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
   })
 
   after(() => {
-    cy.visit('https://automationexercise.com/')
-    cy.get('a[href="/login"]').click()
-    
-    cy.get('body').then($body => {
-      if ($body.text().includes('Login to your account')) {
-        performLogin(testUser.email, testUser.password)
-      }
-      
-      deleteAccount()
-    })
+    testFlows.cleanupTestAccount(testUser.email, testUser.password)
   })
 })

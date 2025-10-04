@@ -13,10 +13,35 @@ class CadastroPage {
     cy.get('a[href="/login"]').click()
   }
 
+  /**
+   * Preenche formulário básico de signup com nome e email
+   * @param {string} name - Nome do usuário
+   * @param {string} email - Email do usuário
+   */
+  fillBasicSignupForm(name, email) {
+    this.accessSignupPage()
+    cy.contains('h2', 'New User Signup!')
+    cy.get('[data-qa="signup-name"]').type(name)
+    cy.get('[data-qa="signup-email"]').type(email)
+    cy.contains('button', 'Signup').click()
+  }
+
   fillSignupForm(userData) {
     cy.get('[data-qa="signup-name"]').type(userData.name)
     cy.get('[data-qa="signup-email"]').type(userData.email)
     cy.contains('button', 'Signup').click()
+  }
+
+  /**
+   * Preenche informações completas da conta incluindo data de nascimento
+   * @param {object} userData - Dados do usuário
+   * @param {object} birthDate - Data de nascimento (opcional, será gerada se não fornecida)
+   */
+  fillCompleteAccountForm(userData, birthDate = null) {
+    if (!birthDate) {
+      birthDate = getRandomBirthDate()
+    }
+    this.fillAccountForm(userData, birthDate)
   }
 
   fillAccountForm(userData, birthDate) {
