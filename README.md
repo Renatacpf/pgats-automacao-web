@@ -35,18 +35,28 @@ pgats-automacao-web/
 ├── cypress/
 │   ├── e2e/                                          # Suíte de testes
 │   │   ├── automation-exercise-complete-flow.cy.js   # ⭐ Fluxo principal (5 test cases)
+│   │   ├── automation-exercise.-modules.cy.js        # 🧩 Testes usando módulos (POM)
 │   │   ├── automation-exercise.cy.js                 # Teste básico de cadastro
 │   │   ├── test-analysis-and-fixes.cy.js            # Correção de bugs
 │   │   └── test-xpath-comparison.cy.js               # Comparação CSS vs XPath
 │   ├── fixtures/                                     # Dados de teste
-│   │   └── example.json
+│   │   ├── example.json                              # Dados centralizados
+│   │   └── test-image.png                            # Arquivo para upload
+│   ├── modules/                                      # 🏗️ Arquitetura modular (POM)
+│   │   ├── cadastro/index.js                        # Módulo de cadastro de usuários
+│   │   ├── contato/index.js                         # Módulo de formulário de contato
+│   │   ├── login/index.js                           # Módulo de autenticação
+│   │   ├── menu/index.js                            # Módulo de navegação
+│   │   └── carrinho/index.js                        # Módulo de carrinho de compras
 │   ├── screenshots/                                  # Screenshots automáticos
 │   └── support/                                      # Configurações e comandos
 │       ├── commands.js                               # Comandos customizados
+│       ├── helpers.js                               # 🎲 Funções com faker.js
 │       └── e2e.js                                    # Setup global
 ├── css-vs-xpath-comparison.md                        # 📊 Análise técnica detalhada
 ├── test-analysis-and-fixes-summary.md                # 🔧 Documentação de correções
 ├── test-cases-implementation-summary.md              # 📋 Resumo completo dos testes
+├── modular-architecture-documentation.md             # 🏗️ Documentação da arquitetura modular
 ├── cypress.config.js                                # Configuração do Cypress
 ├── package.json                                      # Dependências e scripts
 ├── .gitignore                                        # Arquivos ignorados
@@ -143,6 +153,19 @@ npx cypress run --spec "cypress/e2e/test-xpath-comparison.cy.js"
 npx cypress run --spec "cypress/e2e/automation-exercise.cy.js"
 ```
 
+#### **🧩 Executar Testes Modulares (Page Object Model)**
+```bash
+# Testes usando arquitetura modular - Recomendado para manutenibilidade
+npx cypress run --spec "cypress/e2e/automation-exercise.-modules.cy.js"
+
+# Interface gráfica para testes modulares
+npx cypress open --spec "cypress/e2e/automation-exercise.-modules.cy.js"
+```
+
+# Teste básico de referência
+npx cypress run --spec "cypress/e2e/automation-exercise.cy.js"
+```
+
 #### **🔄 Execução Completa**
 ```bash
 # Todos os testes (24 testes em ~2 minutos)
@@ -166,15 +189,75 @@ npx cypress run --browser edge
 
 ---
 
+## 🏗️ **Arquitetura Modular (Page Object Model)**
+
+### **🎯 Visão Geral**
+O projeto implementa uma arquitetura modular baseada no padrão **Page Object Model (POM)** para máxima reutilização, manutenibilidade e escalabilidade dos testes.
+
+### **📂 Estrutura dos Módulos**
+```
+cypress/modules/
+├── cadastro/index.js    # 📝 Cadastro de usuários
+├── contato/index.js     # 📧 Formulário de contato com upload
+├── login/index.js       # 🔑 Autenticação e logout
+├── menu/index.js        # 🧭 Navegação entre páginas
+└── carrinho/index.js    # 🛒 Carrinho de compras
+```
+
+### **🔧 Princípios da Arquitetura**
+
+#### **✅ Separação de Responsabilidades**
+- **Módulos**: Contêm apenas **ações** (Page Actions)
+- **Testes**: Contêm apenas **asserções** (Test Assertions)
+
+#### **✅ Reutilização Máxima**
+- Métodos podem ser usados em múltiplos testes
+- Redução significativa de duplicação de código
+- Facilita criação de novos cenários
+
+#### **✅ Manutenibilidade**
+- Alterações na UI requerem mudanças apenas no módulo correspondente
+- Código organizado por funcionalidade
+- Debug mais eficiente
+
+### **📝 Exemplo de Uso**
+```javascript
+// Importar módulos
+import CadastroPage from '../modules/cadastro/index.js'
+import ContatoPage from '../modules/contato/index.js'
+
+// Instanciar
+const cadastroPage = new CadastroPage()
+const contatoPage = new ContatoPage()
+
+// Usar ações dos módulos
+cadastroPage.visitHomePage()
+cadastroPage.fillSignupForm(userData)
+cadastroPage.createAccount()
+
+// Validações ficam no teste
+cy.url().should('include', 'account_created')
+cy.contains('Account Created!').should('be.visible')
+```
+
+### **🎲 Geração de Dados Dinâmicos**
+Os módulos integram-se com `helpers.js` que utiliza **@faker-js/faker** para:
+- ✅ **Dados realistas**: Nomes, emails, endereços, etc.
+- ✅ **Testes únicos**: Cada execução gera dados diferentes
+- ✅ **Robustez**: Evita conflitos de dados entre execuções
+
+---
+
 ## 📊 **Métricas e Performance**
 
 ### **📈 Estatísticas Gerais**
 | Arquivo | Testes | Tempo | Status |
 |---------|--------|-------|---------|
 | `automation-exercise-complete-flow.cy.js` | 11 | 1m 20s | ✅ 100% |
+| `automation-exercise.-modules.cy.js` | 2 | 40s | ✅ 100% |
 | `test-analysis-and-fixes.cy.js` | 6 | 11s | ✅ 100% |
 | `test-xpath-comparison.cy.js` | 6 | 9s | ✅ 100% |
-| `automation-exercise.cy.js` | 1 | 18s | ✅ 100% |
+| `automation-exercise.cy.js` | 2 | 1m | ✅ 100% |
 | **TOTAL** | **24** | **~2m** | **✅ 100%** |
 
 ### **🎯 Cobertura de Funcionalidades**
