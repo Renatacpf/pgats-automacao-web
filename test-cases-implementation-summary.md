@@ -5,7 +5,7 @@
 Este documento apresenta um resumo detalhado dos cenários de teste implementados no projeto, com foco especial na implementação modular avançada que utiliza o padrão Page Object Model com módulo especializado para fluxos complexos.
 
 ### **📂 Arquivos de Teste Documentados:**
-1. **`automation-exercise-complete-flow-modules.cy.js`** - ⭐ **Arquivo principal** com arquitetura modular avançada (11 test cases)
+1. **`automation-exercise-complete-flow-modules.cy.js`** - ⭐ **Arquivo principal** com arquitetura modular avançada (16 test cases)
 2. **`automation-exercise-complete-flow.cy.js`** - Fluxo completo com 5 test cases
 3. **`automation-exercise.-modules.cy.js`** - Implementação básica usando Page Object Model
 4. **Outros arquivos** - Análises e comparações técnicas
@@ -20,9 +20,9 @@ Este arquivo representa a **evolução arquitetural** do projeto, demonstrando c
 
 #### **📊 Métricas de Melhoria:**
 - **Linhas de código**: 211 → 152 (redução de 28%)
-- **Test cases**: 11 cenários completos
+- **Test cases**: 16 cenários completos
 - **Performance**: 1m 40s de execução
-- **Taxa de sucesso**: 100% (11/11 testes passando)
+- **Taxa de sucesso**: 100% (16/16 testes passando)
 - **Arquitetura**: Page Object Model + TestFlows Module
 
 #### **🏗️ Módulos Utilizados:**
@@ -61,6 +61,24 @@ Módulo especializado para operações complexas e fluxos que envolvem múltipla
 **Métodos de Utilidade:**
 - `navigateToHomePage()` - Navegação com verificação
 - `cleanupTestAccount(email, password)` - Limpeza completa pós-teste
+
+##### **5. ProdutosPage** - **NOVO MÓDULO**
+Módulo especializado para funcionalidades da página de produtos:
+
+**Métodos Principais:**
+- `verifyAllProductsPageTitle()` - Verifica título da página de produtos
+- `verifyProductsList()` - Valida exibição da lista de produtos
+- `searchProduct(searchTerm)` - Realiza busca de produtos
+- `verifySearchedProductsTitle()` - Verifica título dos resultados de busca
+- `verifySearchResults(searchTerm)` - Valida resultados da busca
+
+##### **6. SubscriptionPage** - **NOVO MÓDULO**
+Módulo para funcionalidades de newsletter e inscrição:
+
+**Métodos Principais:**
+- `performCompleteSubscription(email)` - Realiza inscrição completa na newsletter
+- `verifySubscriptionSuccess()` - Verifica sucesso da inscrição
+- `scrollToSubscriptionSection()` - Navega para seção de inscrição
 
 ---
 
@@ -105,25 +123,125 @@ it('Should login user with correct credentials', () => {
 - **5.1** - Erro ao registrar com email existente
 - **5.2** - Múltiplas tentativas com mesmo email
 
+### **Test Case 8: Verify All Products and product detail page**
+**Cenário:** Verificação da página de produtos e navegação para detalhes
+```javascript
+it('Should display all products and navigate to product detail page', () => {
+  menuPage.navigateToProducts()
+  produtosPage.verifyAllProductsPageTitle()
+  produtosPage.verifyProductsList()
+  cy.get('.single-products').should('have.length.greaterThan', 0)
+  cy.visit('https://automationexercise.com/product_details/1')
+  cy.get('.product-information').should('be.visible')
+})
+```
+
+### **Test Case 9: Search Product**
+**Cenário:** Busca de produtos com verificação de resultados
+```javascript
+it('Should search for products and display relevant results', () => {
+  menuPage.navigateToProducts()
+  produtosPage.verifyAllProductsPageTitle()
+  const searchTerm = 'shirt'
+  produtosPage.searchProduct(searchTerm)
+  produtosPage.verifySearchedProductsTitle()
+  produtosPage.verifySearchResults(searchTerm)
+})
+```
+
+### **Test Case 10: Verify Subscription in home page**
+**Cenário:** Inscrição na newsletter através da página inicial
+```javascript
+it('Should allow user to subscribe to newsletter from home page', () => {
+  const subscriptionEmail = `subscription.${Date.now()}@example.com`
+  subscriptionPage.performCompleteSubscription(subscriptionEmail)
+})
+```
+
+### **Test Case 15: Place Order: Register before Checkout**
+**Cenário:** Registro de usuário e realização de pedido completo
+```javascript
+it('Should allow user to register and place an order', () => {
+  cadastroPage.fillBasicSignupForm(checkoutUser.name, checkoutUser.email)
+  cadastroPage.fillCompleteAccountForm(checkoutUser)
+  testFlows.completeRegistration()
+  
+  cy.visit('https://automationexercise.com/products')
+  cy.get('.single-products').first().find('a[data-product-id="1"]').eq(0).click({ force: true })
+  cy.contains('Continue Shopping').click()
+  
+  cy.visit('https://automationexercise.com/view_cart')
+  cy.contains('Proceed To Checkout').click()
+  
+  cy.get('[name="message"]').type('Test order comment')
+  cy.contains('Place Order').click()
+  
+  cy.get('[data-qa="name-on-card"]').type(cardInfo.nameOnCard)
+  cy.get('[data-qa="card-number"]').type(cardInfo.cardNumber)
+  cy.get('[data-qa="cvc"]').type(cardInfo.cvc)
+  cy.get('[data-qa="expiry-month"]').type(cardInfo.expiryMonth)
+  cy.get('[data-qa="expiry-year"]').type(cardInfo.expiryYear)
+  cy.get('[data-qa="pay-button"]').click()
+  
+  cy.contains('Order Placed!').should('be.visible')
+})
+```
+
+### **Test Case 16: Place Order: Login before Checkout**
+**Cenário:** Login de usuário existente e realização de pedido
+```javascript
+it('Should allow existing user to login and place an order', () => {
+  loginPage.realizarLogin(testUser.email, testUser.password)
+  testFlows.verifyUserLoggedIn(testUser.name)
+  
+  cy.visit('https://automationexercise.com/products')
+  cy.get('.single-products').eq(1).find('a[data-product-id="2"]').eq(0).click({ force: true })
+  cy.contains('Continue Shopping').click()
+  
+  cy.visit('https://automationexercise.com/view_cart')
+  cy.contains('Proceed To Checkout').click()
+  
+  cy.get('[name="message"]').type('Test order comment')
+  cy.contains('Place Order').click()
+  
+  cy.get('[data-qa="name-on-card"]').type(cardInfo.nameOnCard)
+  cy.get('[data-qa="card-number"]').type(cardInfo.cardNumber)
+  cy.get('[data-qa="cvc"]').type(cardInfo.cvc)
+  cy.get('[data-qa="expiry-month"]').type(cardInfo.expiryMonth)
+  cy.get('[data-qa="expiry-year"]').type(cardInfo.expiryYear)
+  cy.get('[data-qa="pay-button"]').click()
+  
+  cy.contains('Order Placed!').should('be.visible')
+})
+```
+
 ---
 
 ## 🔄 **Fluxo de Dados Compartilhados**
 
 ### **📊 Estratégia de Dados:**
 1. **Setup Global**: Dados gerados uma vez no `before()`
-2. **Reutilização**: Mesmo usuário usado em todos os test cases
-3. **Cleanup Automático**: Remoção da conta no `after()`
+2. **Dois Usuários**: `testUser` para login/logout e `checkoutUser` para pedidos
+3. **Reutilização**: Usuários usados em multiple test cases
+4. **Cleanup Automático**: Remoção de ambas as contas no `after()`
 
 ### **🎲 Dados Dinâmicos Gerados:**
 ```javascript
+// Usuário principal para testes de login/logout
 const userData = generateUserData()
-testUser = {
-  name: userData.name,
-  email: userData.email,           // Email único com timestamp
-  password: userData.password,     // Senha segura gerada
-  firstName: userData.firstName,
-  lastName: userData.lastName,
-  // ... outros campos
+testUser = { /* dados completos */ }
+
+// Usuário separado para testes de checkout
+const checkoutUserData = generateUserData()
+checkoutUser = { /* dados completos */ }
+
+// Dados de cartão para pagamentos
+const cardInfo = {
+  nameOnCard: 'Test User',
+  cardNumber: '4242424242424242',
+  cvc: '123',
+  expiryMonth: '12',
+  expiryYear: '2028'
 }
 ```
 

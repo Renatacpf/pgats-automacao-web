@@ -44,18 +44,27 @@ class TestFlows {
   }
 
   cleanupTestAccount(email, password) {
-    this.navigateToHomePage()
-    cy.get('a[href="/login"]').click()
-    
-    cy.get('body').then($body => {
-      if ($body.text().includes('Login to your account')) {
-        cy.get('[data-qa="login-email"]').type(email)
-        cy.get('[data-qa="login-password"]').type(password)
-        cy.get('[data-qa="login-button"]').click()
-      }
+    try {
+      this.navigateToHomePage()
       
-      this.deleteUserAccount()
-    })
+      cy.get('body').then($body => {
+        if ($body.find('a[href="/login"]').length > 0) {
+          cy.get('a[href="/login"]').click()
+          
+          cy.get('body').then($loginBody => {
+            if ($loginBody.text().includes('Login to your account')) {
+              cy.get('[data-qa="login-email"]').type(email)
+              cy.get('[data-qa="login-password"]').type(password)
+              cy.get('[data-qa="login-button"]').click()
+            }
+            
+            this.deleteUserAccount()
+          })
+        }
+      })
+    } catch (error) {
+      cy.log('Cleanup failed, continuing...')
+    }
   }
 }
 

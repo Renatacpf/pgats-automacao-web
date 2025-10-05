@@ -61,6 +61,75 @@ class CarrinhoPage {
     cy.get('.cart_quantity_update').click()
   }
 
+  // Checkout functionality
+  verifyCheckoutPage() {
+    cy.url().should('include', '/checkout')
+  }
+
+  verifyAddressDetails() {
+    cy.get('.checkout-information').should('be.visible')
+    cy.get('#address_delivery').should('be.visible')
+    cy.get('#address_invoice').should('be.visible')
+  }
+
+  verifyOrderDetails() {
+    cy.get('#cart_info').should('be.visible')
+    cy.get('.cart_menu').should('be.visible')
+  }
+
+  addCommentToOrder(comment) {
+    cy.get('[name="message"]').type(comment)
+  }
+
+  placeOrder() {
+    cy.contains('Place Order').click()
+  }
+
+  verifyPaymentPage() {
+    cy.url().should('include', '/payment')
+    cy.contains('Payment Information').should('be.visible')
+  }
+
+  fillPaymentInformation(cardInfo) {
+    cy.get('[data-qa="name-on-card"]').type(cardInfo.nameOnCard)
+    cy.get('[data-qa="card-number"]').type(cardInfo.cardNumber)
+    cy.get('[data-qa="cvc"]').type(cardInfo.cvc)
+    cy.get('[data-qa="expiry-month"]').type(cardInfo.expiryMonth)
+    cy.get('[data-qa="expiry-year"]').type(cardInfo.expiryYear)
+  }
+
+  confirmOrder() {
+    cy.get('[data-qa="pay-button"]').click()
+  }
+
+  verifyOrderSuccess() {
+    cy.url().should('include', '/payment_done')
+    cy.contains('Order Placed!').should('be.visible')
+    cy.contains('Congratulations! Your order has been confirmed!').should('be.visible')
+  }
+
+  downloadInvoice() {
+    cy.contains('Download Invoice').click()
+  }
+
+  continueAfterOrder() {
+    cy.contains('Continue').click()
+  }
+
+  // Complete order flow
+  completeOrderWithRegistration(userData, cardInfo, orderComment = 'Test order comment') {
+    this.proceedToCheckout()
+    this.verifyCheckoutPage()
+    this.verifyAddressDetails()
+    this.verifyOrderDetails()
+    this.addCommentToOrder(orderComment)
+    this.placeOrder()
+    this.verifyPaymentPage()
+    this.fillPaymentInformation(cardInfo)
+    this.confirmOrder()
+    this.verifyOrderSuccess()
+  }
+
   adicionarProdutoAoCarrinho(productName = null) {
     this.visitHomePage()
     this.navigateToProducts()
