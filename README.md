@@ -36,7 +36,7 @@ O projeto implementa uma suíte abrangente de testes automatizados que aborda de
 pgats-automacao-web/
 ├── cypress/
 │   ├── e2e/                                          # Suíte de testes
-│   │   ├── automation-exercise-complete-flow-modules.cy.js # ⭐ Fluxo modular (11 test cases)
+│   │   ├── automation-exercise-complete-flow-modules.cy.js # ⭐ Fluxo modular (16 test cases)
 │   │   ├── automation-exercise-complete-flow.cy.js   # Fluxo principal (5 test cases)
 │   │   ├── automation-exercise.-modules.cy.js        # 🧩 Testes usando módulos (POM)
 │   │   ├── automation-exercise.cy.js                 # Teste básico de cadastro
@@ -51,6 +51,8 @@ pgats-automacao-web/
 │   │   ├── login/index.js                           # Módulo de autenticação
 │   │   ├── menu/index.js                            # Módulo de navegação
 │   │   ├── carrinho/index.js                        # Módulo de carrinho de compras
+│   │   ├── produtos/index.js                        # Módulo de produtos e busca
+│   │   ├── subscription/index.js                    # Módulo de newsletter
 │   │   └── testflows/index.js                       # 🔄 Módulo de fluxos complexos
 │   ├── reports/                                      # 📊 Relatórios HTML gerados
 │   │   └── html/                                     # Relatórios do mochawesome
@@ -92,7 +94,7 @@ pgats-automacao-web/
 
 ### **🏆 Arquivo Principal: `automation-exercise-complete-flow-modules.cy.js`**
 
-**O arquivo estrela do projeto** que implementa todos os 5 test cases principais com arquitetura modular avançada:
+**O arquivo estrela do projeto** que implementa 16 test cases completos com arquitetura modular avançada:
 
 #### **Test Cases Cobertos:**
 1. **TC1 - Register User**: Cadastro completo de usuário
@@ -100,6 +102,11 @@ pgats-automacao-web/
 3. **TC3 - Login Incorrect**: Falhas de login (4 cenários)
 4. **TC4 - Logout User**: Logout e validações de estado (3 cenários)
 5. **TC5 - Register Existing**: Cadastro com email duplicado (2 cenários)
+8. **TC8 - Verify Products**: Verificação de produtos e detalhes
+9. **TC9 - Search Product**: Busca de produtos com validação
+10. **TC10 - Subscription**: Inscrição em newsletter
+15. **TC15 - Order with Registration**: Pedido com novo usuário
+16. **TC16 - Order with Login**: Pedido com usuário existente
 
 #### **Arquitetura Modular Avançada:**
 - 🧩 **Page Object Model**: Módulos especializados para cada área
@@ -107,12 +114,15 @@ pgats-automacao-web/
 - 🛠️ **Smart Methods**: `fillBasicSignupForm()`, `performSmartLogout()`, `cleanupTestAccount()`
 - 🛡️ **Defensive Programming**: Verificações de estado antes de cada ação
 - 🧹 **Auto Cleanup**: Remoção automática de dados de teste
-- 📊 **Performance**: 11 testes em 1m 40s (152 linhas de código)
+- 📊 **Performance**: 16 testes em 2m 12s (código otimizado e limpo)
 
 #### **Módulos Utilizados:**
 - **CadastroPage**: Cadastro e signup
 - **LoginPage**: Autenticação inteligente  
 - **MenuPage**: Navegação e verificações
+- **CarrinhoPage**: Carrinho e checkout completo
+- **ProdutosPage**: Produtos, busca e detalhes
+- **SubscriptionPage**: Newsletter e inscrições
 - **TestFlows**: Operações complexas e cleanup
 
 ---
@@ -216,7 +226,7 @@ npx cypress run --spec "cypress/e2e/automation-exercise.cy.js"
 
 #### **🔄 Execução Completa**
 ```bash
-# Todos os testes (38 testes em ~8 minutos) com relatório HTML
+# Todos os testes (43 testes em ~10 minutos) com relatório HTML
 npm test
 
 # Todos os testes via Cypress CLI
@@ -382,7 +392,7 @@ open cypress/reports/html/index.html
 #### **📈 Dados do Último Relatório:**
 - **Total de testes**: 38
 - **Taxa de sucesso**: 100%
-- **Tempo total**: ~8 minutos
+- **Tempo total**: ~10 minutos
 - **Arquivos testados**: 6 specs
 - **Tamanho do relatório**: ~60KB
 
@@ -661,7 +671,7 @@ Para contribuir com o projeto:
 
 Este projeto demonstra uma evolução completa de automação de testes, desde implementações básicas até uma arquitetura modular profissional com:
 
-- ✅ **38 testes automatizados** com 100% de aprovação
+- ✅ **43 testes automatizados** com 100% de aprovação
 - ✅ **Relatórios HTML profissionais** com cypress-mochawesome-reporter
 - ✅ **Arquitetura modular** baseada no Page Object Model
 - ✅ **Performance otimizada** com scripts npm e dados dinâmicos
