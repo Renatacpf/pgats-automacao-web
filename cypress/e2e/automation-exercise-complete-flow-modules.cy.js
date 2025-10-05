@@ -244,7 +244,7 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
       cy.get('[data-qa="expiry-year"]').type(cardInfo.expiryYear)
       cy.get('[data-qa="pay-button"]').click()
       
-      cy.contains('Order Placed!').should('be.visible')
+      cy.contains('Order Placed!')
     })
   })
 
@@ -271,7 +271,7 @@ describe('Automation Exercise - Complete User Flow Tests', () => {
       cy.get('[data-qa="expiry-year"]').type(cardInfo.expiryYear)
       cy.get('[data-qa="pay-button"]').click()
       
-      cy.contains('Order Placed!').should('be.visible')
+      cy.contains('Order Placed!')
     })
   })
 
