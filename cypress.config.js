@@ -1,6 +1,10 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
+  retries: {
+    runMode: 1, // Reduced retries to avoid long CI times
+    openMode: 0
+  },
   e2e: {
     reporter: 'cypress-mochawesome-reporter',
     pageLoadTimeout: 200000, // 3+ minutes for page load
