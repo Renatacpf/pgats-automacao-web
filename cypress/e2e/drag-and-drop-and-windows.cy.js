@@ -1,10 +1,4 @@
 describe('Drag and Drop and Windows', () => {
-  beforeEach(() => {
-    // Increase timeouts for BrowserStack environment
-    cy.window().then((win) => {
-      win.fetch = win.fetch || (() => Promise.resolve({ ok: true }));
-    });
-  });
 
   it('Multiple Windows', () => {
     cy.visit('https://the-internet.herokuapp.com/windows', { 
@@ -41,27 +35,20 @@ describe('Drag and Drop and Windows', () => {
     cy.get('#column-a', { timeout: 10000 }).should('be.visible').and('contain', 'A');
     cy.get('#column-b', { timeout: 10000 }).should('be.visible').and('contain', 'B');
 
-    // More robust drag and drop implementation for BrowserStack
-    cy.get('#column-a').then(($source) => {
-      cy.get('#column-b').then(($target) => {
-        const dataTransfer = new DataTransfer();
-        
-        // Trigger drag events
-        cy.get('#column-a')
-          .trigger('mousedown', { which: 1 })
-          .trigger('dragstart', { dataTransfer })
-          .wait(100);
-          
-        cy.get('#column-b')
-          .trigger('dragover', { dataTransfer })
-          .trigger('drop', { dataTransfer })
-          .wait(100);
-          
-        cy.get('#column-a')
-          .trigger('dragend', { dataTransfer })
-          .trigger('mouseup');
-      });
-    });
+    // Simplified drag and drop for BrowserStack compatibility
+    cy.get('#column-a')
+      .trigger('mousedown', { which: 1 })
+      .trigger('dragstart')
+      .wait(200);
+      
+    cy.get('#column-b')
+      .trigger('dragover')
+      .trigger('drop')
+      .wait(200);
+      
+    cy.get('#column-a')
+      .trigger('dragend')
+      .trigger('mouseup');
 
     // Verify the drag and drop worked
     cy.get('#column-a', { timeout: 10000 }).should('have.text', 'B');
