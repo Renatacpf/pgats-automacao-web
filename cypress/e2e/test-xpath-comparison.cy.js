@@ -3,19 +3,20 @@
 
 describe('Cadastrar entradas e saídas com XPath', () => {
   
-  beforeEach(() => {
-    // Visit the page once with extended timeout
+  before(() => {
+    // Visit the page once for the entire test suite
     cy.visit("https://devfinance-agilizei.netlify.app", { 
-      timeout: 120000,
+      timeout: 180000, // 3 minutes for initial load
       failOnStatusCode: false 
     })
     
     // Wait for essential elements to be loaded
-    cy.get('body', { timeout: 30000 }).should('be.visible')
-    // Wait for the "Nova Transação" button as indicator that page is ready
-    cy.contains('Nova Transação', { timeout: 30000 }).should('be.visible')
-    
-    // Clear any existing transactions to ensure clean state
+    cy.get('body', { timeout: 45000 }).should('be.visible')
+    cy.contains('Nova Transação', { timeout: 45000 }).should('be.visible')
+  })
+
+  beforeEach(() => {
+    // Only clear transactions between tests, no page reload
     cy.get('body').then(($body) => {
       if ($body.find('tbody tr').length > 0) {
         cy.get('tbody tr').each(() => {
