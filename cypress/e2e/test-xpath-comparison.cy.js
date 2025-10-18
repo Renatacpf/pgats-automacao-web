@@ -10,9 +10,10 @@ describe('Cadastrar entradas e saídas com XPath', () => {
       failOnStatusCode: false 
     })
     
-    // Wait for page to be fully loaded before each test
+    // Wait for essential elements to be loaded
     cy.get('body', { timeout: 30000 }).should('be.visible')
-    cy.contains('h1', 'dev.finance', { timeout: 20000 }).should('be.visible')
+    // Wait for the "Nova Transação" button as indicator that page is ready
+    cy.contains('Nova Transação', { timeout: 30000 }).should('be.visible')
     
     // Clear any existing transactions to ensure clean state
     cy.get('body').then(($body) => {
